@@ -1,18 +1,48 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { Order } from '../types'
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-function OrderCard() {
+dayjs.locale('pt-br')
+dayjs.extend(relativeTime)
+
+type Props = {
+  order: Order
+}
+
+function dateFromNow(date: string) {
+  return dayjs(date).fromNow()
+}
+
+/*
+CODIGO PRA FORMATAR DATA, MAS ESTÁ DANDO ERRO
+export function formatPrice(price: number) {
+  const formatter = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2
+  })
+  return formatter.format(price)
+  formatPrice() ESTE ENTRA NAS APAS DE ORDERPRICE E DENTRO DAS CHAVES O ORDER.TOTAL
+}
+*/
+
+function OrderCard({ order }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.orderName}>PEDIDO 1</Text>
-        <Text style={styles.orderPrice}>R$ 210,00</Text>
+        <Text style={styles.orderName}>PEDIDO {order.id}</Text>
+        <Text style={styles.orderPrice}>{order.total}</Text>
       </View>
-      <Text style={styles.text}>Há 15 min</Text>
+      <Text style={styles.text}>{dateFromNow(order.moment)}</Text>
       <View style={styles.productsList}>
-        <Text style={styles.text}>Banho e tosa</Text>
-        <Text style={styles.text}>1 pacote ração premium</Text>
-        <Text style={styles.text}>Cama para cachorro</Text>
+        {order.products.map(product => (
+          <Text key={product.id} style={styles.text}>
+            {product.name}
+          </Text>
+        ))}
       </View>
     </View>
   )
